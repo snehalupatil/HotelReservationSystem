@@ -1,13 +1,22 @@
 public class HotelInfo {
-
     public String hotelName;
-    public int rateForRegularCustomer;
+    public int weekDayRate;
     public int ratings;
+    public int weekEndRate;
 
-    public HotelInfo(String hotelName, int rateForRegularCustomer,int hotelratings) {
+    public HotelInfo(String hotelName, int rateForRegularCustomer,int hotelratings,int weekDayRate) {
         this.hotelName = hotelName;
-        this.rateForRegularCustomer = rateForRegularCustomer;
+        this.weekDayRate = rateForRegularCustomer;
         this.ratings=hotelratings;
+        this.weekEndRate=weekDayRate;
+    }
+
+    public int getWeekEndRate() {
+        return weekEndRate;
+    }
+
+    public void setWeekEndRate(int weekEndRate) {
+        this.weekEndRate = weekEndRate;
     }
 
     public int getRatings() {
@@ -26,14 +35,14 @@ public class HotelInfo {
         this.hotelName = hotelName;
     }
 
-    public int getRateForRegularCustomer() {
-        return rateForRegularCustomer;
+    public int getWeekDayRate() {
+        return weekDayRate;
     }
 
-    public void setRateForRegularCustomer(int rateForRegularCustomer) {
-        this.rateForRegularCustomer = rateForRegularCustomer;
+    public void setWeekDayRate(int rateForRegularCustomer) {
+        this.weekDayRate = rateForRegularCustomer;
     }
     public String toString(){
-        return "HotelName:"+hotelName+",RatesForRegularCustomer:"+rateForRegularCustomer;
+        return "HotelName:"+hotelName+",RatesForRegularCustomer:"+weekDayRate;
     }
 }

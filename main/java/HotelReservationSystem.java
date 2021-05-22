@@ -14,9 +14,9 @@ public class HotelReservationSystem  {
     Scanner scanner = new Scanner(System.in);
     HotelInfo hotelReservation;
     public void addHotel() {
-        hotelInfo.add(new HotelInfo("LakeWood", 110,3));
-        hotelInfo.add(new HotelInfo("BridgeWood", 160,4));
-        hotelInfo.add(new HotelInfo("RidgeWood", 220,5));
+        hotelInfo.add(new HotelInfo("LakeWood", 110,3,90));
+        hotelInfo.add(new HotelInfo("BridgeWood", 160,4,50));
+        hotelInfo.add(new HotelInfo("RidgeWood", 220,5,150));
         hotelInfo.stream().forEach(System.out::println);
     }
 
