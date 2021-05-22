@@ -1,14 +1,13 @@
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class HotelReservationSystem  {
-
-    /*
-            Add  hotels
-     */
 
     ArrayList<HotelInfo> hotelInfo = new ArrayList<>();
     Scanner scanner = new Scanner(System.in);
@@ -20,40 +19,54 @@ public class HotelReservationSystem  {
         hotelInfo.stream().forEach(System.out::println);
     }
 
-    /*
-        *Find the cheapest hotel with rate
-     */
-
-    public String CheapestHotelAndRate(String arrivalDate, String checkoutDate) {
-
-        Date StartDate = convertStringToDate(arrivalDate);
-        Date EndDate = convertStringToDate(checkoutDate);
-        long Duration = EndDate.getTime()-StartDate.getTime();
-
-        int Days = (int) TimeUnit.DAYS.convert(Duration,TimeUnit.MILLISECONDS);
-
-        for (int hotel = 0; hotel < hotelInfo.size(); hotel++) {
-            int newRate = getRateForRegularCustomer() * (Days);
-            hotelInfo.get(hotel).setRateForRegularCustomer(newRate);
+    public String CheapestHotelAndRate(String arrivalDate, String checkoutDate) throws ParseException {
+        String dateRegex = "^(([0-9])|([0-2][0-9])|([3][0-1]))(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\d{4}$";
+        if(!arrivalDate.matches(dateRegex) && !checkoutDate.matches(dateRegex)) {
+            System.out.println("Invalid date");
+            System.exit(0);
         }
-        int regularRate = hotelInfo.stream().min(Comparator.comparing(HotelInfo::getRateForRegularCustomer)).get().getRateForRegularCustomer();
-        String hotelName = hotelInfo.stream().min(Comparator.comparing(HotelInfo::getRateForRegularCustomer)).get().getHotelName();
+        LocalDate StartDate = convertStringToDate(arrivalDate);
+        LocalDate EndDate = convertStringToDate(checkoutDate);
+        int minHotelBill = Integer.MAX_VALUE;
+        String minWeeKDayHotelName = null;
+        String minWeekEndHotelName=null;
 
-        System.out.println(hotelName + ", Total Rates: $" + regularRate);
+        for (HotelInfo hotelDetails : hotelInfo) {
+            LocalDate start = StartDate;
+            LocalDate end = EndDate.plusDays(1);
+            int hotelBill = 0;
+            while (!(start.equals(end))) {
+                int day = start.getDayOfWeek().getValue();
+                if (day == 6 || day == 7){
+                    hotelBill = hotelBill +hotelDetails.getWeekEndRate();
+                }
+                else{
+                    hotelBill = hotelBill + hotelDetails.getWeekDayRate();
+                }
+                start = start.plusDays(1);
+            }
+            minWeeKDayHotelName=hotelInfo.stream().min((Comparator.comparing(HotelInfo::getWeekDayRate))).get().getHotelName();
+            minWeekEndHotelName=hotelInfo.stream().min((Comparator.comparing(HotelInfo::getWeekEndRate))).get().getHotelName();
 
-        return hotelName + ", $" + regularRate;
+            if (hotelBill <= minHotelBill) {
+                minHotelBill = hotelBill;
+                System.out.println(minWeeKDayHotelName+" and "+minWeekEndHotelName+","+minHotelBill);
+            }
+        }
 
+        return minWeeKDayHotelName+" and "+minWeekEndHotelName+","+minHotelBill;
     }
-
-    /*
-            Convert string date to date format ddmmyyyy
-     */
-    public Date convertStringToDate(String dateString) {
-        Date date;
-        DateFormat dateFormat = new SimpleDateFormat("ddMMMyyyy");
-        date = dateFormat.parse(dateString);
+    public static LocalDate convertStringToDate(String dateString) {
+        LocalDate date = null;
+        DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("ddMMMyyyy");
+        try {
+            date = LocalDate.parse(dateString, dateTimeFormat);
+        } catch (DateTimeParseException e) {
+            e.printStackTrace();
+        }
         return date;
     }
+
 
     public static void main(String[] args)  {
         Scanner scanner = new Scanner(System.in);
