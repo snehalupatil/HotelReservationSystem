@@ -7,7 +7,8 @@ import java.util.concurrent.TimeUnit;
 public class HotelReservationSystem  {
 
     /*
-            Add  hotels
+            *This methis will Add  hotels
+            *
      */
 
     ArrayList<HotelInfo> hotelInfo = new ArrayList<>();
@@ -21,10 +22,41 @@ public class HotelReservationSystem  {
     }
 
     /*
-        *Find the cheapest hotel with rate
+        *this methos will Find the cheapest hotel with rate
      */
+    public boolean toCheckDate(String dateToReserved, String dateFromat) {
+        SimpleDateFormat sdf = new SimpleDateFormat(dateFromat);
+        sdf.setLenient(false);
+        try {
+            Date date = sdf.parse(dateToReserved);
+            Calendar currentDateAfter3Months = Calendar.getInstance();
+            currentDateAfter3Months.add(Calendar.MONTH, 3);
 
-    public String CheapestHotelAndRate(String arrivalDate, String checkoutDate) {
+            Calendar currentDateBefore3Months = Calendar.getInstance();
+            currentDateBefore3Months.add(Calendar.MONTH, -3);
+
+            if (date.before(currentDateAfter3Months.getTime()) && date.after(currentDateBefore3Months.getTime())) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+
+
+    public String CheapestHotelAndRate(String arrivalDate, String checkoutDate) throws ParseException {
+
+
+        String dateRegex = "^(([0-9])|([0-2][0-9])|([3][0-1]))(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\d{4}$";
+        if(!arrivalDate.matches(dateRegex) && !checkoutDate.matches(dateRegex)) {
+            System.out.println("Invalid date");
+            System.exit(0);
+
 
         Date StartDate = convertStringToDate(arrivalDate);
         Date EndDate = convertStringToDate(checkoutDate);
@@ -48,7 +80,7 @@ public class HotelReservationSystem  {
     /*
             Convert string date to date format ddmmyyyy
      */
-    public Date convertStringToDate(String dateString) {
+    public Date convertStringToDate(String dateString) throws ParseException{
         Date date;
         DateFormat dateFormat = new SimpleDateFormat("ddMMMyyyy");
         date = dateFormat.parse(dateString);
@@ -65,6 +97,7 @@ public class HotelReservationSystem  {
         System.out.println("Enter the checkout date: ");
         String checkoutDate =scanner.nextLine();
         addHotel();
+
         CheapestHotelAndRate(arrivalDate,checkoutDate);
 
     }
